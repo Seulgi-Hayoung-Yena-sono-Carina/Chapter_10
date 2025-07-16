@@ -17,3 +17,7 @@ spring:
     console:
       enabled: true               # H2 콘솔 활성화 (브라우저에서 H2 데이터베이스 접근 가능)
       path: /h2-console            # H2 콘솔의 경로
+
+jwt:
+  issuer: chsm7288@naver.com
+  secret_key: study-springboot
