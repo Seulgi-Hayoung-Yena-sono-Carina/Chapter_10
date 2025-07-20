@@ -1,23 +1,29 @@
 package LikelionSummerStudy.blogSummer.controller;
 
 import LikelionSummerStudy.blogSummer.domain.Article;
+import LikelionSummerStudy.blogSummer.domain.User;
 import LikelionSummerStudy.blogSummer.dto.request.AddArticleRequest;
 import LikelionSummerStudy.blogSummer.dto.request.UpdateArticleRequest;
 import LikelionSummerStudy.blogSummer.repository.BlogRepository;
+import LikelionSummerStudy.blogSummer.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.security.Principal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,12 +51,29 @@ public class BlogApiControllerTest {
     @Autowired
     private BlogRepository blogRepository;
 
+    @Autowired
+    UserRepository userRepository;
+
+    User user;
+
     @BeforeEach
     public void setUp() {
         //mockMvc를 수동으로 설정
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         //테스트 전 DB를 비우기
         blogRepository.deleteAll();
+    }
+
+    @BeforeEach
+    void setSecurityContext() {
+        userRepository.deleteAll();
+        user = userRepository.save(User.builder()
+                .email("user@gmail.com")
+                .password("test")
+                .build());
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
     }
 
     @DisplayName("addArticle Test")
@@ -64,11 +87,15 @@ public class BlogApiControllerTest {
         //userRequest 객체를 JSON 문자열로 바꾸기
         final String requestBody = objectMapper.writeValueAsString(userRequest);
 
+        Principal principal = Mockito.mock(Principal.class);
+        Mockito.when(principal.getName()).thenReturn("username");
+
         // when
         //POST /api/articles 요청을 JSON 형식으로 보내기
         //requestBody는 {"title":"title","content":"content"} 같은 형태로
         ResultActions result = mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .principal(principal)
                 .content(requestBody));
 
         // then
@@ -84,14 +111,8 @@ public class BlogApiControllerTest {
     public void findAllArticles() throws Exception {
         //given
         final String url = "/api/articles";
-        final String title = "title";
-        final String content = "content";
+        Article savedArticle=createDefaultArticle();
 
-        //Article 하나를 DB에 직접 저장
-        blogRepository.save(Article.builder()
-                .title(title)
-                .content(content)
-                .build());
 
         //when
         //GET /api/articles 요청을 보내기
@@ -102,8 +123,8 @@ public class BlogApiControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 //첫 번째 요소의 content, title 값을 검증
-                .andExpect(jsonPath("$[0].content").value(content))
-                .andExpect(jsonPath("$[0].title").value(title));
+                .andExpect(jsonPath("$[0].content").value(savedArticle.getContent()))
+                .andExpect(jsonPath("$[0].title").value(savedArticle.getTitle()));
     }
 
     @DisplayName("findArticle Test")
@@ -111,15 +132,7 @@ public class BlogApiControllerTest {
     public void findArticle() throws Exception {
         //given
         final String url = "/api/articles/{id}";
-        final String title = "title";
-        final String content = "content";
-
-        //Article 하나를 DB에 직접 저장
-        Article savedArticle = blogRepository.save(Article.builder()
-                .title(title)
-                .content(content)
-                .build());
-
+        Article savedArticle=createDefaultArticle();
         //when
         ResultActions resultActions = mockMvc.perform(get(url, savedArticle.getId()));
 
@@ -127,8 +140,8 @@ public class BlogApiControllerTest {
         resultActions
                 .andExpect(status().isOk())
                 //첫 번째 요소의 content, title 값을 검증
-                .andExpect(jsonPath("$.content").value(content))
-                .andExpect(jsonPath("$.title").value(title));
+                .andExpect(jsonPath("$.content").value(savedArticle.getContent()))
+                .andExpect(jsonPath("$.title").value(savedArticle.getTitle()));
     }
 
     @DisplayName("deleteArticle Test")
@@ -136,14 +149,7 @@ public class BlogApiControllerTest {
     public void deleteArticle() throws Exception {
         //given
         final String url = "/api/articles/{id}";
-        final String title = "title";
-        final String content = "content";
-
-        //Article 하나를 DB에 직접 저장
-        Article savedArticle = blogRepository.save(Article.builder()
-                .title(title)
-                .content(content)
-                .build());
+        Article savedArticle=createDefaultArticle();
 
         //when
         mockMvc.perform(delete(url, savedArticle.getId()))
@@ -160,14 +166,7 @@ public class BlogApiControllerTest {
     public void updateArticle() throws Exception {
         //given
         final String url = "/api/articles/{id}";
-        final String title = "title";
-        final String content = "content";
-
-        //Article 하나를 DB에 직접 저장
-        Article savedArticle = blogRepository.save(Article.builder()
-                .title(title)
-                .content(content)
-                .build());
+        Article savedArticle = createDefaultArticle();
 
         final String newTitle="new title";
         final String newContent="new content";
@@ -186,5 +185,13 @@ public class BlogApiControllerTest {
         assertThat(article.getTitle()).isEqualTo(newTitle);
         assertThat(article.getContent()).isEqualTo(newContent);
 
+    }
+
+    private Article createDefaultArticle(){
+        return blogRepository.save(Article.builder()
+                .title("title")
+                .author(user.getUsername())
+                .content("content")
+                .build());
     }
 }

@@ -1,3 +1,4 @@
+/*
 package LikelionSummerStudy.blogSummer.controller;
 import LikelionSummerStudy.blogSummer.domain.Article;
 import LikelionSummerStudy.blogSummer.dto.request.AddArticleRequest;
@@ -12,13 +13,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
+*/
 /**
 * API 반환 예쁘게 다듬은 버전
-**/
+**//*
+
 
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping("/api/articles/v2")
+@RequestMapping("/api/articles/v2")
 public class BlogApiControllerV2 {
 
     private final BlogService blogService;
@@ -74,4 +77,4 @@ public class BlogApiControllerV2 {
         blogService.delete(id);
         return ResponseEntity.ok(new ApiResponse<>(true, HttpStatus.OK.value(), "게시글 삭제 성공", null));
     }
-}
+}*/

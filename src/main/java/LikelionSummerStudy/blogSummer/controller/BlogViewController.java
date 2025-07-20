@@ -1,4 +1,4 @@
-package LikelionSummerStudy.blogSummer.controller;
+ package LikelionSummerStudy.blogSummer.controller;
 
 import LikelionSummerStudy.blogSummer.domain.Article;
 import LikelionSummerStudy.blogSummer.dto.response.ArticleListViewResponse;

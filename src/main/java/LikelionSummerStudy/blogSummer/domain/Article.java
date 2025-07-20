@@ -29,6 +29,9 @@ public class Article {
     private String content;
 
 
+    @Column(name="author",nullable = false)
+    private String author;
+
     @CreatedDate
     @Column(name="created_at")
     private LocalDateTime createdAt;
@@ -39,9 +42,10 @@ public class Article {
 
 
     @Builder //일부 필드만 포함한 빌더 생성자를 명시적으로 정의
-    public Article(String title, String content){
+    public Article(String title, String content,String author){
         this.title=title;
         this.content=content;
+        this.author=author;
     }
 
     public void update(String title, String content){

@@ -1,4 +1,4 @@
-package LikelionSummerStudy.blogSummer.config;
+/*package LikelionSummerStudy.blogSummer.config;
 
 import LikelionSummerStudy.blogSummer.service.UserDetailService;
 import lombok.RequiredArgsConstructor;
@@ -58,12 +58,12 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(HttpSecurity http, BCryptPasswordEncoder bCryptPasswordEncoder,
                                                        UserDetailService userDetailService) throws Exception{
 
-        /**
+        *//**
          *DaoAuthenticationProvider: DB나 다른 저장소에서 사용자 정보를
          * 가져와 인증을 처리하는 Spring Security의 기본 제공 인증 제공자
          * 이 객체: UserDetailService를 통해 사용자 정보를 가져옴
          * PassWordEncoder를 사용해 비밀번호 비교
-         **/
+         **//*
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         // 사용자 이름과 비밀번호를 기반으로 인증을 처리하는 객체 주입받기
@@ -83,5 +83,5 @@ public class WebSecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
-}
+}*/
 

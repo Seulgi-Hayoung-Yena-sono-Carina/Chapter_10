@@ -1,3 +1,4 @@
+/*
 package LikelionSummerStudy.blogSummer.controller;
 
 import LikelionSummerStudy.blogSummer.domain.Article;
@@ -27,10 +28,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
+*/
 /**
  * @Disabled 애노테이션을 활용해서 V2Test 비활성화
  * V2 버전 사용을 위해서는 V1에 @Disabled("V1 has been disabled") 붙이고 V2의 @Disabled 삭제
- **/
+ **//*
+
 @Disabled("V2 has been disabled")
 @SpringBootTest
 @AutoConfigureMockMvc //MockMvc를 자동 구성
@@ -192,4 +195,4 @@ public class BlogApiControllerV2Test {
         assertThat(article.getContent()).isEqualTo(newContent);
 
     }
-}
+}*/

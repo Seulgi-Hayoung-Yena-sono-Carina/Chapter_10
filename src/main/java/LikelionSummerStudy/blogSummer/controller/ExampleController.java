@@ -21,6 +21,7 @@ public class ExampleController {
         model.addAttribute("today", LocalDate.now());
         return "example";
     }
+
     @Data
     class Person {
         private Long id;

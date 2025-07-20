@@ -12,17 +12,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Long save(AddUserRequest dto){
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return userRepository.save(User.builder()
                 .email(dto.getEmail())
-                //패스워드를 저장할 때 시큐리티를 설정하여 패스워드 인코딩용으로 등록한 빈을 사용해서 암호화한 후 저장
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .build()).getId();
+                .password(encoder.encode(dto.getPassword())) //사용자가 입력한 비밀번호를 BCrypt로 암호화
+                .build()).getId(); //암호화된 비번 그리고 이메일만 설정해서 User 객체 생성, DB에 User 저장하고 저장된 User의 id(PK) 반환
     }
-    public User findById(Long userId){
+    public User findById(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(()->new IllegalArgumentException("Unexpected user"));
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Unexpected user"));
     }
 }

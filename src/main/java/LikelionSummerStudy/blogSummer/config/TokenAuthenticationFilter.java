@@ -15,6 +15,7 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final TokenProvider tokenProvider; //JWT 토큰의 유효성 검증, Autehntication 개게 생성 담당 클래스
+
     private final static String HEADER_AUTHORIZATION="Authorization";
     private final static String TOKEN_PREFIX="Bearer ";
 
@@ -25,6 +26,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain) throws ServletException, IOException {
         //요청 헤더의 Authorization 키의 값 조회
         String authorizationHeader = request.getHeader(HEADER_AUTHORIZATION);
+        /**
+         * String authorizationHeader = request.getHeader("Authorization");
+         * "Authorization"에 마우스 커서 올리고 Ctrl + Alt + C 누르면 위 private final static field 자동 생성
+         * */
+
         //가져온 값에서 접두사 제거
         String token=getAccessToken(authorizationHeader);
         //가져온 토콘이 유효한지 확인, 유효한 때는 인증 정보를 설정
