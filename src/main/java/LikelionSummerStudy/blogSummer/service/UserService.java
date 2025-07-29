@@ -15,10 +15,11 @@ public class UserService {
 
     public Long save(AddUserRequest dto){
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //암호화된 비번 그리고 이메일만 설정해서 User 객체 생성, DB에 User 저장하고 저장된 User의 id(PK) 반환
         return userRepository.save(User.builder()
                 .email(dto.getEmail())
                 .password(encoder.encode(dto.getPassword())) //사용자가 입력한 비밀번호를 BCrypt로 암호화
-                .build()).getId(); //암호화된 비번 그리고 이메일만 설정해서 User 객체 생성, DB에 User 저장하고 저장된 User의 id(PK) 반환
+                .build()).getId();
     }
     public User findById(Long userId) {
         return userRepository.findById(userId)

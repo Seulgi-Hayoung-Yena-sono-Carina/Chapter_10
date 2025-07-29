@@ -23,6 +23,7 @@ import java.time.Duration;
 //SimpleUrlAuthenticationSuccessHandler: 로그인 성공 시 기본 리다이렉트 기능을 제공하는 스프링 시큐리티 클래스
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
+    //Ctrl+Alt+C 이용해서 쉽게 작성하기
     public static final String REFRESH_TOKEN_COOKIE_NAME = "refresh_token"; //쿠키에 저장할 refresh token 이름
     public static final Duration REFRESH_TOKEN_DURATION = Duration.ofDays(14); //refresh token의 유효 기간
     public static final Duration ACCESS_TOKEN_DURATION = Duration.ofDays(1); //access token의 유효 기간
@@ -44,6 +45,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String refreshToken = tokenProvider.generateToken(user, REFRESH_TOKEN_DURATION); //Refresh Token 생성
         saveRefreshToken(user.getId(), refreshToken); //DB에 있으면 갱신, 없으면 생성
         addRefreshTokenToCookie(request, response, refreshToken); //기존 refresh_token 삭제 후 새 토큰을 쿠키로 추가
+
         //Acess Token 발급 후 최종 redirect 경로에 포함
         String accessToken = tokenProvider.generateToken(user, ACCESS_TOKEN_DURATION); //Access Token 생성
         String targetUrl = getTargetUrl(accessToken); // /articles?token=... 형식의 URL로 redirect 경로를 구성

@@ -14,6 +14,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
+
     private final TokenProvider tokenProvider; //JWT 토큰의 유효성 검증, Autehntication 개게 생성 담당 클래스
 
     private final static String HEADER_AUTHORIZATION="Authorization";

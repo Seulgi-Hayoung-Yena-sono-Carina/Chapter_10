@@ -3,6 +3,7 @@ package LikelionSummerStudy.blogSummer.config.oauth;
 import LikelionSummerStudy.blogSummer.domain.User;
 import LikelionSummerStudy.blogSummer.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -13,14 +14,20 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
-//DefaultOAuth2UserService: Spring Security OAuth2에서 OAuth2 인증 서버(Google, Naver 등)로부터 사용자 정보를 가져오는 기본 구현 클래스
+
+/**
+ * DefaultOAuth2UserService: Spring Security OAuth2에서 OAuth2 인증 서버(Google, Naver 등)로부터 사용자 정보를 가져오는 기본 구현 클래스
+ * OAuth2UserCustomService: users 테이블에 사용자 정보가 있으면 이름을 업데이트하고 없다면 회원 데이터를 추가하는 클래스
+ * */
 public class OAuth2UserCustomService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
-
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         //요청을 바탕으로 유저 정보를 담은 객체를 반환
+        /**
+         * super.loadUser로 받아온 사용자 객체: 식별자, 이름, 이메일, 프로필 사진 링크 등의 정보를 가짐
+         * */
         OAuth2User user = super.loadUser(userRequest); //구글에서 유저의 정보를 fetch(받아옴)
         saveOrUpdate(user); //유저 정보를 DB에 저장 or update
         return user; //최종 사용자 정보 반환(나중에 SecurityContext에 저장됨)
@@ -37,8 +44,8 @@ public class OAuth2UserCustomService extends DefaultOAuth2UserService {
         User user = userRepository.findByEmail(email)
                 .map(entity -> entity.update(name))
                 .orElse(User.builder()
-                        .email(email)
-                        .nickname(name)
+                        .email(email) //구글 계정의 email 주소 ->User의 email 필드로
+                        .nickname(name) //구글 계정의 사용자 이름 ->User의 nickname 필드로
                         .build()
                 );
         return userRepository.save(user);

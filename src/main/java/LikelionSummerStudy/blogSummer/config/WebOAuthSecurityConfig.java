@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @RequiredArgsConstructor
-@Configuration// 스프링 설정 클래스
+@Configuration //스프링 설정 클래스
 public class WebOAuthSecurityConfig {
     private final OAuth2UserCustomService oAuth2UserCustomService;
     private final TokenProvider tokenProvider;
@@ -84,6 +84,7 @@ public class WebOAuthSecurityConfig {
                 .build();
     }
 
+    //인증 성공 시 실행할 핸들러
     @Bean
     public OAuth2SuccessHandler oAuth2SuccessHandler(){
         return new OAuth2SuccessHandler(tokenProvider,
@@ -97,6 +98,7 @@ public class WebOAuthSecurityConfig {
         return new TokenAuthenticationFilter(tokenProvider);
     }
 
+    //OAuth2에 필요한 정보를 세션이 아닌 쿠키에 저장해서 쓸 수 있도록 인증 요청과 관련된 상태를 저장할 저장소
     @Bean
     public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository(){
         return new OAuth2AuthorizationRequestBasedOnCookieRepository();

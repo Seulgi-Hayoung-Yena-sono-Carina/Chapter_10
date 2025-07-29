@@ -8,7 +8,7 @@ import org.springframework.util.SerializationUtils;
 import java.util.Base64;
 import java.util.Optional;
 
-
+//쿠키를 생성하고 삭제 및 관리하는 클래스
 public class CookieUtil {
     //서버가 클라이언트에 쿠키를 설정해서 보내는 메서드
     public static void addCookie(HttpServletResponse response, String name,String value, int maxAge){
